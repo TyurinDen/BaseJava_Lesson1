@@ -1,3 +1,5 @@
+package com.urise.webapp.model;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,7 +22,7 @@ public class MainArray {
             }
             String uuid = null;
             if (params.length == 2) {
-                uuid = params[1].intern();
+                uuid = params[1].intern(); //что дает здесь использование intern()??
             }
             switch (params[0]) {
                 case "list":
@@ -30,8 +32,7 @@ public class MainArray {
                     System.out.println(ARRAY_STORAGE.size());
                     break;
                 case "save":
-                    r = new Resume();
-                    r.uuid = uuid;
+                    r = new Resume(uuid);
                     ARRAY_STORAGE.save(r);
                     printAll();
                     break;

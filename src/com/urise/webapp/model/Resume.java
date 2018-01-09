@@ -1,3 +1,4 @@
+package com.urise.webapp.model;
 /**
  * com.urise.webapp.model.Resume class
  */
@@ -18,8 +19,8 @@ public class Resume {
 
     @Override
     public String toString() {
-        return "Resume{" +
-                "uuid='" + uuid + '\'' +
-                '}';
+        return "Resume {" +
+                "uuid = '" + uuid + '\'' +
+                " }";
     }
 }
