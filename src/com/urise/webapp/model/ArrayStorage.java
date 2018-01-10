@@ -7,11 +7,18 @@ import java.util.Arrays;
 public class ArrayStorage {
     //private Resume[] storage = new Resume[10000];
     private static Resume[] storage = new Resume[100];
-    static int storageLen, storageSize;
+    static private int storageLen;
+    static private int storageSize;
+    static private int lastFreeCell;
+    //static private int[] freeCellsIndices = new int[storage.length / 10];
 
     public ArrayStorage() {
         storageLen = storage.length;
-        storageSize = size();
+        storageSize = 0;
+        lastFreeCell = 0;
+//        for (int i = 0; i < freeCellsIndices.length; i++) {
+//            freeCellsIndices[i] = i;
+//        }
     }
 
     public static void main(String[] args) {
@@ -19,7 +26,7 @@ public class ArrayStorage {
             storage[i] = new Resume("resume " + i);
         }
         System.out.println(Arrays.toString(storage));
-        System.out.println(size());
+        System.out.println(storageSize);
         System.out.println(checkEntry("resume 8"));
         System.out.println(checkEntry("resume 888"));
     }
@@ -31,21 +38,40 @@ public class ArrayStorage {
     }
 
     static int save(Resume resume) {
-        if (checkEntry(resume.getUuid()) < 0) {
-            storage[size() + 1] = new Resume(resume.getUuid());
+        int index = checkEntry(resume.getUuid());
+        if (index >= 0) return index;
+        if (lastFreeCell > 0 | lastFreeCell < storageLen) {
+            storage[lastFreeCell] = new Resume(resume.getUuid());
+            index = lastFreeCell;
+            lastFreeCell += 1;
+            setStorageSize(storageSize + 1);
+            return index;
+            //или без индекса return lastFreeCell - 1;
+        } else {
+            //вот здесь можно запустить этот мнханизм поиска первой свободной ячейки
+            //только в том случае если сайз меньше длины массива, иначе просто возвращаем ошибку.
+            //и метод нормализации не понадобится, массив будет заполняться более менне равномерно
+            //хотя можно и заморочиться
+            //можно и сортировку сделать самому, просто для практики
+            if (normalize() > 0) {
+                //как то можно использовать сайз и размер массива. если сайз = длине, то массив заполнен полностью
+                lastFreeCell
+            }
         }
+        index = lastFreeCell;
+        lastFreeCell += 1;
+        if (lastFreeCell < storageLen) return;
         return checkEntry(resume.getUuid());
+        //или сделать метод, который ищет первый свободный элемент, и присваивает его индекс ластФриСелу
+        //
         //можно хранить индекс первой свободной ячейки
         //создать массив который содержит индексы ненулевых элементов в рабочем массиве
         //по идее если делать ребейз, то в этом нет необходимости
     }
 
     Resume get(String uuid) {
-        //int arrayLen = size();
-        for (int i = 0; i < storageSize; i++) {
-
-        }
-        return null;
+        if (checkEntry(uuid) < 0) return null;
+        return storage[checkEntry(uuid)];
     }
 
     void delete(String uuid) {
@@ -61,28 +87,34 @@ public class ArrayStorage {
         return new Resume[0];
     }
 
-    //можно этому методу передавать массив, но тогда нужно перегружать метод, так как работать
-    //с примитивами надо одним способом, а с объектами другим (?????)
-    static int size() {
-        int arraySize = 0;
-        //int arrayLen = storage.length;
+    static void size() {
+        int size = 0;
         for (int i = 0; i < storageLen; i++) {
-            if (storage[i] != null) {
-                arraySize += 1;
-            }
+            if (storage[i] != null) size += 1;
         }
-        return arraySize;
+        storageSize = size;
     }
 
-    private void normalize() {
+    private static int normalize() {
+        //может возвращать количество освобожденных ячеек
+        return 0;
         //помещает все элемента мыссива в начало
         //метод не так прост как кажется.
     }
 
     private static int checkEntry(String uuid) {
+        size();
         for (int i = 0; i < storageSize; i++) {
             if (storage[i].getUuid() == uuid) return i;
         }
         return -1;
+    }
+
+    public static int getStorageSize() {
+        return storageSize;
+    }
+
+    private static void setStorageSize(int storageSize) {
+        ArrayStorage.storageSize = storageSize;
     }
 }

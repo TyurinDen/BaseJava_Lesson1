@@ -29,7 +29,7 @@ public class MainArray {
                     printAll();
                     break;
                 case "size":
-                    System.out.println(ARRAY_STORAGE.size());
+                    //System.out.println(ARRAY_STORAGE.g);
                     break;
                 case "save":
                     r = new Resume(uuid);
