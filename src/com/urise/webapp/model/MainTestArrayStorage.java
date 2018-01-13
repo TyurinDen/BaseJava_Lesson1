@@ -3,7 +3,7 @@ package com.urise.webapp.model;
  * Test for com.urise.webapp.storage.ArrayStorage
  */
 public class MainTestArrayStorage {
-    static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
+    static final ArrayStorage ARRAY_STORAGE = new ArrayStorage(100);
 
     public static void main(String[] args) {
         Resume r1 = new Resume("uuid1");
