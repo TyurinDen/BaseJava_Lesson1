@@ -11,7 +11,7 @@ public class ArrayStorage {
     private int freeCell;
 
     ArrayStorage(int arraySize) {
-        if (arraySize < 100) storage = new Resume[100];
+        if (arraySize < 100) storage = new Resume[100]; //в массиве будет минимум 100 элементов
         else storage = new Resume[(arraySize / 100) * 100 + 100]; //количество элементов будет кратно 100
         storageLen = storage.length;
         NUMBER_OF_GROUPS = 10; //количество групп элементов в массиве, по которым будет оцениваться фрагментированность
@@ -46,11 +46,12 @@ public class ArrayStorage {
         return storage[index];
     }
 
-    void delete(String uuid) { //по идее можно вернуть признак выполнения операции
+    int delete(String uuid) {
         int index = checkEntry(uuid);
-        if (index < 0) return; //массив не содержит удаляемый элемент, удалять нечего
+        if (index < 0) return -1; //массив не содержит удаляемый элемент, удалять нечего
         storage[index] = null;
-        freeCell = index; //freeCell теперь указывает на освободившуюся ячейку
+        freeCell = index; //freeCell указывает на освободившуюся ячейку, что должно сдерживать фрагментацию массива
+        return index;
     }
 
     /**
@@ -79,46 +80,59 @@ public class ArrayStorage {
 
     /**
      * Метод вычисляет фрагментацию массива, анализируя массив группами по numberElmsInGroup.
+     * Фрагментация группы элементов вычисляется как соотношение пустых и заполненных ячеек
+     * в группе. Фрагментация = 0.5 - в группе поровну пустых и заполненных ячеек. Если фрагментация
+     * становится больше 0.5 - это значит, что в группе больше половины пустых ячеек.
+     * Общая фрагментация вычисляется как среднее по всем группам. Если она превышает установленный
+     * порог, то выполняется нормализация.
      *
+     * @return - средняю фрагментированность массива
      * @author - Denis Tyurin
      */
-    float evaluateFragmentation() {
+    private float evaluateFragmentation() {
         int startIndex;
         int numberOfNonEmptyCell;
         float fragmentation;
-        float totalFragmentation = 0;
+        float totalFragmentation = 0; //общая фрагментированность массива
         for (int i = 0; i < NUMBER_OF_GROUPS; i++) {
             startIndex = i * numberElmsInGroup;
             numberOfNonEmptyCell = 0;
             for (int j = startIndex; j < startIndex + numberElmsInGroup; j++) {
                 if (storage[j] != null) numberOfNonEmptyCell++;
             }
-            if (numberOfNonEmptyCell == 0) fragmentation = 0;
+            if (numberOfNonEmptyCell == 0) fragmentation = 0; //если группа не содержит элементов вообще
             else fragmentation = 1 - (float)numberOfNonEmptyCell / numberElmsInGroup;
             totalFragmentation += fragmentation;
         }
         return totalFragmentation / NUMBER_OF_GROUPS;
     }
     /**
-     * Метод нормализует массив, перемещая все значимые элементы с конца в его начало.
+     * Метод нормализует массив, перемещая все значимые элементы в его начало начиная с конца.
+     * Метод вызывается вручную, однако оценит фрагментацию самостоятельно, и если она выше 0.5 -
+     * выполнит нормализацию.
      *
+     * @return - признак выполнения нормализации
      * @author - Denis Tyurin
      */
-    private void normalize() { //нормализует массив, то есть все элементы перемещаются в начало массива
-        int index = storageLen - 1;
-        for (int i = 0; i < index; i++) {
-            if (storage[i] == null) {
-                for (int j = index; j > i; j--) {
-                    if (storage[j] != null) {
-                        storage[i] = storage[j];
-                        storage[j] = null;
-                        index = j - 1;
-                        break;
+    int normalize() {
+        if (evaluateFragmentation() > 0.5) { //то есть в среднем массив наполовину пуст
+            int index = storageLen - 1;
+            for (int i = 0; i < index; i++) {
+                if (storage[i] == null) {
+                    for (int j = index; j > i; j--) {
+                        if (storage[j] != null) {
+                            storage[i] = storage[j];
+                            storage[j] = null;
+                            index = j - 1;
+                            break;
+                        }
                     }
                 }
             }
+            freeCell = findFreeCell();
+            return 1; //нормализация выполнена
         }
-        freeCell = findFreeCell();
+        return -1; //в нормализации нет необходимости
     }
 
     private int checkEntry(String uuid) {
