@@ -1,8 +1,9 @@
 package com.urise.webapp.model;
+
 /**
  * com.urise.webapp.model.Resume class
  */
-public class Resume {
+public class Resume implements Comparable<Resume>{
     private String uuid;// Unique identifier
 
     public Resume(String uuid) {
@@ -17,15 +18,14 @@ public class Resume {
         this.uuid = uuid.intern();
     }
 
-//    @Override
-//    public String toString() {
-//        return "Resume {" +
-//                "uuid = '" + uuid + '\'' +
-//                "}";
-//    }
 
     @Override
     public String toString() {
         return "uuid='" + uuid + '\'';
+    }
+
+    @Override
+    public int compareTo(Resume o) {
+        return uuid.compareTo(o.getUuid());
     }
 }
