@@ -1,8 +1,5 @@
 package com.urise.webapp.model;
 
-/**
- * Array based storage for Resumes
- */
 public class ArrayStorage {
     private Resume[] storage;
     private int storageLen;
@@ -64,10 +61,6 @@ public class ArrayStorage {
             if (r != null) resumes[index++] = r;
         }
         return resumes;
-    }
-
-    Resume[] getStorage() {
-        return storage;
     }
 
     int size() {
