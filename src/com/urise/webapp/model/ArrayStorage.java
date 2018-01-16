@@ -14,7 +14,7 @@ public class ArrayStorage {
     }
 
     void clear() {
-        Arrays.fill(storage, 0, size() - 1, null);
+        Arrays.fill(storage, 0, size(), null);
     }
 
     int save(Resume resume) {
@@ -29,15 +29,18 @@ public class ArrayStorage {
     Resume get(String uuid) {
         Resume r = new Resume(uuid);
         int index = Arrays.binarySearch(storage, 0, size(), r);
+        System.out.printf("index = %d\n", index);
         if (index < 0) return null; //элемента с указанным uuid нет в массиве
-        return r;
+        return storage[index];
     }
 
     int delete(String uuid) {
+        if (get(uuid) == null) return -1;
         int index = Arrays.binarySearch(storage, 0, size(), new Resume(uuid));
-        if (index < 0) return -1; //массив не содержит удаляемый элемент, удалять нечего
-        storage[index] = null;
-        normalize(); //TODO можно ли сделать как-нибудь по-другому???
+        System.out.printf("index = %d\n", index);
+        //if (index < 0) return -1; //массив не содержит удаляемый элемент
+        storage[index] = storage[size() - 1];
+        storage[size() - 1] = null;
         return index;
     }
 
@@ -54,31 +57,6 @@ public class ArrayStorage {
             if (storage[i] != null) size++;
         }
         return size;
-    }
-
-    //TODO переделать, не работает!! не нужно бегать по всему массиву!
-    /**
-     * Метод нормализует массив, перемещая все значимые элементы в его начало начиная с конца.
-     * Метод вызывается вручную, однако оценит фрагментацию самостоятельно, и если она выше 0.5 -
-     * выполнит нормализацию.
-     *
-     * @return - признак выполнения нормализации
-     * @author - Denis Tyurin
-     */
-    void normalize() {
-        int index = size() - 1;
-        for (int i = 0; i < index; i++) {
-            if (storage[i] == null) {
-                for (int j = index; j > i; j--) {
-                    if (storage[j] != null) {
-                        storage[i] = storage[j];
-                        storage[j] = null;
-                        index = j - 1;
-                        break;
-                    }
-                }
-            }
-        }
     }
 
 }

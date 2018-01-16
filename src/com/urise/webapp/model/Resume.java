@@ -7,17 +7,12 @@ public class Resume implements Comparable<Resume>{
     private String uuid;// Unique identifier
 
     public Resume(String uuid) {
-        this.uuid = uuid.intern();
+        this.uuid = uuid;
     }
 
     public String getUuid() {
         return uuid;
     }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid.intern();
-    }
-
 
     @Override
     public String toString() {
@@ -28,4 +23,5 @@ public class Resume implements Comparable<Resume>{
     public int compareTo(Resume o) {
         return uuid.compareTo(o.getUuid());
     }
+
 }

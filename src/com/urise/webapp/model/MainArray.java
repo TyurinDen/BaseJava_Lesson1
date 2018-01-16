@@ -29,7 +29,7 @@ public class MainArray {
                     printAll();
                     break;
                 case "size":
-                    //System.out.println(ARRAY_STORAGE.g);
+                    System.out.printf("Размер массива: %d\n", ARRAY_STORAGE.size());
                     break;
                 case "save":
                     r = new Resume(uuid);
