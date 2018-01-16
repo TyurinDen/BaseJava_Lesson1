@@ -9,7 +9,6 @@ public class ArrayStorage {
     ArrayStorage(int arraySize) {
         if (arraySize < 100) storage = new Resume[100]; //в массиве будет минимум 100 элементов
         else storage = new Resume[(arraySize / 100) * 100 + 100]; //количество элементов будет кратно 100
-//        storage = new Resume[] {new Resume("RES001"), new Resume("RES002"), new Resume("RES003")};
         storageLen = storage.length;
     }
 
@@ -20,27 +19,29 @@ public class ArrayStorage {
     int save(Resume resume) {
         int index = Arrays.binarySearch(storage, 0, size(), resume);
         if (index >= 0) return index; //если такой элемент уже есть в массиве - возвращаем его индекс
-        index = size();
+        index = size(); //добавляем элемент в конец массива
         if (index == storageLen) return -1; //массив заполнен
         storage[index] = resume;
+        Arrays.sort(storage, 0, size());
         return index; //возвращаем индекс, по которому сохранен новый элемент
     }
 
     Resume get(String uuid) {
         Resume r = new Resume(uuid);
         int index = Arrays.binarySearch(storage, 0, size(), r);
-        System.out.printf("index = %d\n", index);
         if (index < 0) return null; //элемента с указанным uuid нет в массиве
         return storage[index];
     }
 
     int delete(String uuid) {
-        if (get(uuid) == null) return -1;
-        int index = Arrays.binarySearch(storage, 0, size(), new Resume(uuid));
-        System.out.printf("index = %d\n", index);
-        //if (index < 0) return -1; //массив не содержит удаляемый элемент
-        storage[index] = storage[size() - 1];
-        storage[size() - 1] = null;
+        Resume r = get(uuid);
+        int i, size;
+        if (r == null) return -1; //массив не содержит удаляемый элемент
+        int index = Arrays.binarySearch(storage, 0, size(), r);
+        storage[index] = null;
+        size = size();
+        for (i = index; i < size; i++) storage[i] = storage[i + 1];
+        storage[i] = null;
         return index;
     }
 
